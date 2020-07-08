@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "LocationsViewController.h"
 
-@interface PhotoMapViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate, LocationsViewControllerDelegate>
+@interface PhotoMapViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate, LocationsViewControllerDelegate, MKMapViewDelegate>
 
 // MARK: Outlets
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
@@ -25,6 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.mapView.delegate = self;
     
     [self setInitRegion];
 }
@@ -80,12 +81,13 @@
     
     [controller.navigationController popToViewController:self animated:YES];
     
-    // Milestone 5
     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude.floatValue, longitude.floatValue);
     // Add annotation
     MKPointAnnotation *annotation = [MKPointAnnotation new];
     annotation.coordinate = coordinate;
-    annotation.title = @"Picture!";
+    NSString *latString =  [[NSNumber numberWithDouble: coordinate.latitude] stringValue];
+    NSString *lonString =  [[NSNumber numberWithDouble: coordinate.longitude] stringValue];
+    annotation.title = [NSString stringWithFormat:@"%@,%@", latString, lonString];
     [self.mapView addAnnotation:annotation];
     [self.mapView viewForAnnotation:annotation];
 }
@@ -99,7 +101,7 @@
     }
 
     UIImageView *imageView = (UIImageView*)annotationView.leftCalloutAccessoryView;
-    imageView.image = [UIImage imageNamed:@"camera-icon"];
+    imageView.image = [UIImage imageNamed:@"camera"];
 
     return annotationView;
 }
